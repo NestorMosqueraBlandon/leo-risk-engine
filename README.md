@@ -12,17 +12,17 @@ The system is designed for educational institutions that need early-warning capa
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    HTTP Layer (FastAPI)                  │
+│                    HTTP Layer (FastAPI)                 │
 │  /score  /models  /health                               │
 ├─────────────────────────────────────────────────────────┤
-│                   Inference Pipeline                     │
-│  Predictor ──► Model Loader ──► Calibration ──► Explain  │
+│                   Inference Pipeline                    │
+│  Predictor ──► Model Loader ──► Calibration ──► Explain │
 ├─────────────────────────────────────────────────────────┤
 │                   Training Pipeline                     │
 │  Datasets ──► Splits ──► Pipelines ──► Evaluation       │
 ├─────────────────────────────────────────────────────────┤
-│                  Feature Engineering                     │
-│  Academic │ Attendance │ Financial │ Engagement │ ...    │
+│                  Feature Engineering                    │
+│  Academic │ Attendance │ Financial │ Engagement │ ...   │
 ├─────────────────────────────────────────────────────────┤
 │                     Domain Layer                        │
 │  Entities │ Value Objects │ Policies                    │
@@ -42,32 +42,32 @@ The system is designed for educational institutions that need early-warning capa
 
 ### 2.2 Key Design Decisions
 
-| Decision | Rationale |
-|---|---|
-| Polars over Pandas | Columnar memory layout, 10-100x faster for the transformations we need on large student datasets |
-| Survival analysis as baseline | Handles censored data (students still enrolled) — standard classifiers cannot |
-| Isotonic + Platt calibration | Raw model outputs need calibration to be interpretable as probabilities |
-| SHAP for explainability | Consistent, theoretically grounded feature attribution across all model types |
-| FastAPI + Pydantic | Async-native, automatic OpenAPI spec, strict runtime validation |
+| Decision                      | Rationale                                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| Polars over Pandas            | Columnar memory layout, 10-100x faster for the transformations we need on large student datasets |
+| Survival analysis as baseline | Handles censored data (students still enrolled) — standard classifiers cannot                    |
+| Isotonic + Platt calibration  | Raw model outputs need calibration to be interpretable as probabilities                          |
+| SHAP for explainability       | Consistent, theoretically grounded feature attribution across all model types                    |
+| FastAPI + Pydantic            | Async-native, automatic OpenAPI spec, strict runtime validation                                  |
 
 ## 3. Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Language | Python 3.12 |
-| Package Manager | uv |
-| HTTP Framework | FastAPI |
-| Data Validation | Pydantic v2 |
-| Data Processing | Polars |
-| Numerical | NumPy |
-| Machine Learning | scikit-learn |
-| Gradient Boosting | CatBoost, LightGBM |
-| Forecasting | TimesFM (Google) |
-| Experiment Tracking | MLflow |
-| Containerization | Docker + Docker Compose |
-| Linting | Ruff |
-| Type Checking | mypy (strict) |
-| Testing | pytest + pytest-cov |
+| Layer               | Technology              |
+| ------------------- | ----------------------- |
+| Language            | Python 3.12             |
+| Package Manager     | uv                      |
+| HTTP Framework      | FastAPI                 |
+| Data Validation     | Pydantic v2             |
+| Data Processing     | Polars                  |
+| Numerical           | NumPy                   |
+| Machine Learning    | scikit-learn            |
+| Gradient Boosting   | CatBoost, LightGBM      |
+| Forecasting         | TimesFM (Google)        |
+| Experiment Tracking | MLflow                  |
+| Containerization    | Docker + Docker Compose |
+| Linting             | Ruff                    |
+| Type Checking       | mypy (strict)           |
+| Testing             | pytest + pytest-cov     |
 
 ## 4. Project Structure
 
@@ -250,11 +250,11 @@ docker compose up -d
 
 ## 6. API Endpoints
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/score` | Compute risk score for a student |
-| `GET` | `/models` | List available model versions |
-| `GET` | `/health` | Service health check |
+| Method | Path      | Description                      |
+| ------ | --------- | -------------------------------- |
+| `POST` | `/score`  | Compute risk score for a student |
+| `GET`  | `/models` | List available model versions    |
+| `GET`  | `/health` | Service health check             |
 
 ## 7. Model Pipeline
 
