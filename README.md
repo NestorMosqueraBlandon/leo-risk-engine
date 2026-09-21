@@ -109,10 +109,16 @@ leo-risk-engine/
 │   │       ├── missing_data.py
 │   │       └── recommendation_gate.py
 │   │
-│   ├── contracts/              # Pydantic request/response schemas
-│   │   ├── student_context.py
-│   │   ├── score_request.py
-│   │   └── score_response.py
+│   ├── contracts/              # Canonical academic model (Pydantic)
+│   │   ├── base.py             # DataAvailability + CanonicalBase
+│   │   ├── core.py             # Student, Institution, AcademicPeriod, AcademicProgram
+│   │   ├── enrollment.py       # Enrollment, Course, CourseEnrollment
+│   │   ├── observations.py     # GradeObservation, AttendanceObservation, FinancialStatus
+│   │   ├── support.py          # EngagementEvent, StudentSupport
+│   │   ├── interventions.py    # Intervention
+│   │   ├── student_context.py  # (planned: score request context)
+│   │   ├── score_request.py    # (planned)
+│   │   └── score_response.py   # (planned)
 │   │
 │   ├── features/               # Feature engineering
 │   │   ├── academic/           # GPA, credits, course completion
@@ -374,7 +380,47 @@ uv run pytest tests/unit/test_health.py
 uv run pytest -v
 ```
 
-## 9. Label Definition
+## 9. Canonical Academic Model
+
+Leo Risk Engine uses an institution-agnostic canonical model defined in `src/leo_risk/contracts/`. Any SIS (Student Information System) from any country can be mapped to this model via adapters.
+
+### 9.1 Data Availability Pattern
+
+Every observation used by ML includes `DataAvailability`:
+
+| Field | Purpose |
+|---|---|
+| `observed_at` | When the real-world event happened |
+| `available_at` | When this data entered the system (prevents leakage) |
+| `source_system` | Which SIS/provider produced this record |
+| `source_record_id` | Traceability back to the source |
+
+**Rule:** Features can only be used for predictions made **after** `available_at`.
+
+### 9.2 Entity Map
+
+```
+Student ─────┬──── Enrollment ──── AcademicPeriod
+             │        │
+Institution ─┘        ├── CourseEnrollment ──── Course
+                      │
+                      ├── GradeObservation
+                      ├── AttendanceObservation
+                      ├── FinancialStatusRecord
+                      ├── EngagementEvent
+                      ├── StudentSupport
+                      └── Intervention
+```
+
+### 9.3 Country-Specific Data
+
+No country-specific concepts (SNIES, estrato, SPADIES, ICETEX, Saber 11) are mandatory. These go into:
+
+- `Institution.metadata` — institution identifiers
+- `Student.external_ids` — cross-system identity
+- Adapter layer — mapping from SIS-specific schemas to canonical
+
+## 10. Label Definition
 
 The dropout label is formally defined in [`docs/dropout-label-definition.md`](docs/dropout-label-definition.md). Key points:
 
@@ -384,7 +430,7 @@ The dropout label is formally defined in [`docs/dropout-label-definition.md`](do
 - Censorship types for survival analysis (`OBSERVED`, `RIGHT_CENSORED`, etc.)
 - Supports semester, trimester, quarter, quadrimester, annual, and custom calendars
 
-## 10. Development Roadmap
+## 11. Development Roadmap
 
 - [x] Project structure & tooling setup
 - [x] Configuration (Pydantic Settings + env vars)
@@ -400,7 +446,10 @@ The dropout label is formally defined in [`docs/dropout-label-definition.md`](do
 - [x] `LabelContract` with exit reason resolution
 - [x] `LabelVersion` with semantic versioning
 - [x] Dropout label definition document (`docs/dropout-label-definition.md`)
-- [x] 62 unit tests for domain model
+- [x] Canonical academic model (13 Pydantic contracts)
+- [x] `DataAvailability` pattern for leakage prevention
+- [x] 125 unit tests (domain + contracts + health)
+- [ ] SIS adapters (Colombia, US, Mexico)
 - [ ] Feature engineering pipeline
 - [ ] Label builder (applies `LabelContract` to raw data)
 - [ ] Baseline logistic survival model
@@ -413,6 +462,6 @@ The dropout label is formally defined in [`docs/dropout-label-definition.md`](do
 - [ ] Monitoring & drift detection
 - [ ] CI/CD pipeline
 
-## 10. License
+## 12. License
 
 Proprietary — Internal use only.
