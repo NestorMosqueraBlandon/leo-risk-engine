@@ -1,0 +1,85 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+*. wheel
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# uv
+.python-version
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Type checking
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Data files
+datasets/*.csv
+datasets/*.parquet
+datasets/*.json
+datasets/*.xlsx
+!datasets/.gitkeep
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow.db
+
+# Model artifacts
+models/*.pkl
+models/*.joblib
+models/*.onnx
+models/*.cbm
+models/*.bin
+models/*.pt
+models/*.pth
+
+# Feature store
+.feature_store/
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temp files
+tmp/
+temp/
+*.tmp
