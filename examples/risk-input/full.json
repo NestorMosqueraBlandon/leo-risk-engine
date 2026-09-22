@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0.0",
+  "as_of": "2026-09-21T12:00:00Z",
+  "student_id": "660e8400-e29b-41d4-a716-446655440002",
+  "institution_id": "7ca7b810-9dad-11d1-80b4-00c04fd430c9",
+  "academic_program_id": "prog-ba-2024",
+  "academic_period_id": "per-2024-fall",
+  "academic": {
+    "enrollments": [
+      {
+        "enrollment_id": "enr-q-001",
+        "student_id": "660e8400-e29b-41d4-a716-446655440002",
+        "institution_id": "7ca7b810-9dad-11d1-80b4-00c04fd430c9",
+        "program_id": "prog-ba-2024",
+        "period_id": "per-2024-fall",
+        "status": "enrolled",
+        "is_active": true,
+        "semester_index": 2,
+        "accumulated_credits": 45.0,
+        "term_gpa": 3.2,
+        "cumulative_gpa": 3.0,
+        "exit_reason": null,
+        "exit_date": null,
+        "created_at": "2026-09-20T12:00:00Z",
+        "updated_at": "2026-09-20T12:00:00Z",
+        "observed_at": "2026-09-18T12:00:00Z",
+        "available_at": "2026-09-19T12:00:00Z",
+        "source_system": "sis_quarter",
+        "source_record_id": "q-enr-555"
+      }
+    ],
+    "course_enrollments": [],
+    "courses": [],
+    "grade_observations": [
+      {
+        "observation_id": "grd-q-001",
+        "student_id": "660e8400-e29b-41d4-a716-446655440002",
+        "course_enrollment_id": "cenr-q-001",
+        "period_id": "per-2024-fall",
+        "grade_type": "midterm",
+        "score": null,
+        "max_score": null,
+        "percentage": 72.0,
+        "letter_grade": "B-",
+        "passed": true,
+        "comments": "",
+        "observed_at": "2026-09-15T10:00:00Z",
+        "available_at": "2026-09-16T08:00:00Z",
+        "source_system": "lms_moodle",
+        "source_record_id": "moodle-grade-777"
+      }
+    ]
+  },
+  "attendance": {
+    "observations": []
+  },
+  "financial": {
+    "records": [
+      {
+        "observation_id": "fin-q-001",
+        "student_id": "660e8400-e29b-41d4-a716-446655440002",
+        "period_id": "per-2024-fall",
+        "status": "current",
+        "amount_due": 15000.00,
+        "amount_paid": 15000.00,
+        "currency": "USD",
+        "payment_deadline": "2026-10-01",
+        "scholarship_type": "merit",
+        "has_outstanding_debt": false,
+        "consecutive_overdue_periods": 0,
+        "observed_at": "2026-09-19T12:00:00Z",
+        "available_at": "2026-09-20T08:00:00Z",
+        "source_system": "sis_quarter",
+        "source_record_id": "q-fin-888"
+      }
+    ]
+  },
+  "engagement": {
+    "events": [
+      {
+        "event_id": "evt-q-001",
+        "student_id": "660e8400-e29b-41d4-a716-446655440002",
+        "period_id": "per-2024-fall",
+        "event_type": "lms_login",
+        "event_name": "",
+        "platform": "moodle",
+        "url": null,
+        "duration_seconds": null,
+        "course_id": null,
+        "metadata": {},
+        "observed_at": "2026-09-21T06:00:00Z",
+        "available_at": "2026-09-21T06:05:00Z",
+        "source_system": "lms_moodle",
+        "source_record_id": "moodle-evt-999"
+      }
+    ]
+  },
+  "supports": {
+    "records": [
+      {
+        "support_id": "sup-q-001",
+        "student_id": "660e8400-e29b-41d4-a716-446655440002",
+        "period_id": "per-2024-fall",
+        "support_type": "tutoring",
+        "status": "active",
+        "provider_name": "Writing Center",
+        "provider_id": null,
+        "sessions_completed": 3,
+        "sessions_scheduled": 5,
+        "start_date": "2026-09-01",
+        "end_date": "2026-12-10",
+        "notes": "",
+        "observed_at": "2026-09-20T12:00:00Z",
+        "available_at": "2026-09-20T12:00:00Z",
+        "source_system": "advisor_tool",
+        "source_record_id": "adv-sup-111"
+      }
+    ]
+  },
+  "interventions": {
+    "records": [
+      {
+        "intervention_id": "int-q-001",
+        "student_id": "660e8400-e29b-41d4-a716-446655440002",
+        "period_id": "per-2024-fall",
+        "intervention_type": "advisor_outreach",
+        "triggered_by": "risk_score",
+        "advisor_id": "adv-001",
+        "advisor_name": "",
+        "description": "Initial check-in call",
+        "outcome": "completed",
+        "scheduled_date": "2026-09-10",
+        "completed_date": "2026-09-12",
+        "risk_score_at_intervention": 0.65,
+        "notes": "",
+        "metadata": {},
+        "observed_at": "2026-09-12T14:00:00Z",
+        "available_at": "2026-09-12T15:00:00Z",
+        "source_system": "advisor_tool",
+        "source_record_id": "adv-int-222"
+      }
+    ]
+  },
+  "institutional_context": {
+    "period_id": "per-2024-fall",
+    "period_code": "2024-FALL",
+    "period_start_date": "2024-09-25",
+    "period_end_date": "2024-12-10",
+    "period_is_closed": false,
+    "calendar_type": "quarter",
+    "program_id": "prog-ba-2024",
+    "program_name": "Business Administration",
+    "program_level": "undergraduate",
+    "modality": "hybrid",
+    "credit_system": "quarter_credits",
+    "periods_completed": 1,
+    "total_periods": 12,
+    "period_position_ratio": 0.55
+  },
+  "available_sources": [
+    {"source_id": "academic", "status": "available"},
+    {"source_id": "attendance", "status": "not_provided"},
+    {"source_id": "financial", "status": "available"},
+    {"source_id": "engagement", "status": "available"},
+    {"source_id": "lms", "status": "available"},
+    {"source_id": "support", "status": "available"},
+    {"source_id": "interventions", "status": "available"}
+  ],
+  "extensions": {
+    "us.collegeboard": {
+      "sat_score": 1200,
+      "sat_math": 650,
+      "sat_verbal": 550
+    }
+  }
+}

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Self
 
 from pydantic import BaseModel, Field, model_validator
@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, model_validator
 from leo_risk.domain.academic_calendar import AcademicCalendar
 from leo_risk.domain.censorship import CensorshipType
 from leo_risk.domain.enums import OutcomeStatus
-from leo_risk.domain.exit_reason import ExitReason, NON_DROPOUT_REASONS
+from leo_risk.domain.exit_reason import NON_DROPOUT_REASONS, ExitReason
 
 
 class StudentOutcome(BaseModel):
@@ -55,8 +55,8 @@ class StudentOutcome(BaseModel):
         "0.0 = no confidence. Useful when data is partial.",
     )
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @model_validator(mode="after")
     def validate_consistency(self) -> Self:
@@ -74,19 +74,14 @@ class StudentOutcome(BaseModel):
             msg = "DROPPED_OUT status requires a specific exit_reason"
             raise ValueError(msg)
 
-        # Non-dropout exit reasons cannot be DROPPED_OUT
-        if status == OutcomeStatus.DROPPED_OUT and exit_reason in NON_DROPOUT_REASONS:
-            msg = f"exit_reason={exit_reason.value} is incompatible with DROPPED_OUT"
-            raise ValueError(msg)
-
         # PENDING and UNKNOWN cannot have dropout exit reasons
-        if status in (OutcomeStatus.PENDING, OutcomeStatus.UNKNOWN):
-            if exit_reason not in (ExitReason.NONE, ExitReason.NOT_REPORTED):
-                msg = (
-                    f"status={status.value} cannot have exit_reason={exit_reason.value}. "
-                    "Only NONE or NOT_REPORTED allowed for pending/unknown outcomes."
-                )
-                raise ValueError(msg)
+        if (status in (OutcomeStatus.PENDING, OutcomeStatus.UNKNOWN)
+                and exit_reason not in (ExitReason.NONE, ExitReason.NOT_REPORTED)):
+            msg = (
+                f"status={status.value} cannot have exit_reason={exit_reason.value}. "
+                "Only NONE or NOT_REPORTED allowed for pending/unknown outcomes."
+            )
+            raise ValueError(msg)
 
         # Censorship mapping validation
         if status == OutcomeStatus.DROPPED_OUT and censorship == CensorshipType.RIGHT_CENSORED:
@@ -97,10 +92,10 @@ class StudentOutcome(BaseModel):
             msg = "CONTINUED cannot be OBSERVED (dropout was not observed)"
             raise ValueError(msg)
 
-        if status in (OutcomeStatus.PENDING, OutcomeStatus.UNKNOWN):
-            if censorship != CensorshipType.NOT_CENSORABLE:
-                msg = f"status={status.value} must have censorship_type=NOT_CENSORABLE"
-                raise ValueError(msg)
+        if (status in (OutcomeStatus.PENDING, OutcomeStatus.UNKNOWN)
+                and censorship != CensorshipType.NOT_CENSORABLE):
+            msg = f"status={status.value} must have censorship_type=NOT_CENSORABLE"
+            raise ValueError(msg)
 
         # Period validation
         if self.reference_period == self.observation_period:

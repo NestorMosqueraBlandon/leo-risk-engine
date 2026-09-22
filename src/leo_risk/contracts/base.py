@@ -10,8 +10,7 @@ The DataAvailability mixin enforces this by requiring:
   - source_record_id: opaque ID in the source system
 """
 
-from datetime import datetime, timezone
-from typing import Annotated
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -55,10 +54,10 @@ class CanonicalBase(BaseModel):
     model_config = {"strict": True, "validate_assignment": True}
 
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="When this canonical record was created.",
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="When this canonical record was last updated.",
     )

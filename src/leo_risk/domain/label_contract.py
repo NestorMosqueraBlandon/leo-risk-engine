@@ -133,7 +133,9 @@ class LabelContract(BaseModel):
             return self.treat_transfer_as_dropout
         if reason == ExitReason.AUTHORIZED_LEAVE:
             return self.treat_authorized_leave_as_dropout
-        if reason in (ExitReason.VOLUNTARY_WITHDRAWAL, ExitReason.ACADEMIC_DISMISSMENT,
-                       ExitReason.ADMINISTRATIVE, ExitReason.NOT_REPORTED):
-            return True
-        return False
+        return reason in (
+            ExitReason.VOLUNTARY_WITHDRAWAL,
+            ExitReason.ACADEMIC_DISMISSMENT,
+            ExitReason.ADMINISTRATIVE,
+            ExitReason.NOT_REPORTED,
+        )

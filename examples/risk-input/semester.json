@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "as_of": "2026-09-21T12:00:00Z",
+  "student_id": "550e8400-e29b-41d4-a716-446655440001",
+  "institution_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+  "academic_program_id": "prog-cs-2024",
+  "academic_period_id": "per-2024-2",
+  "academic": {
+    "enrollments": [
+      {
+        "enrollment_id": "enr-001",
+        "student_id": "550e8400-e29b-41d4-a716-446655440001",
+        "institution_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        "program_id": "prog-cs-2024",
+        "period_id": "per-2024-2",
+        "status": "enrolled",
+        "is_active": true,
+        "semester_index": 4,
+        "accumulated_credits": 60.0,
+        "term_gpa": 3.8,
+        "cumulative_gpa": 3.5,
+        "exit_reason": null,
+        "exit_date": null,
+        "created_at": "2026-09-18T12:00:00Z",
+        "updated_at": "2026-09-18T12:00:00Z",
+        "observed_at": "2026-09-18T12:00:00Z",
+        "available_at": "2026-09-19T12:00:00Z",
+        "source_system": "sis_university",
+        "source_record_id": "sis-enr-12345"
+      }
+    ],
+    "course_enrollments": [
+      {
+        "course_enrollment_id": "cenr-001",
+        "student_id": "550e8400-e29b-41d4-a716-446655440001",
+        "course_id": "crs-cs201",
+        "period_id": "per-2024-2",
+        "enrollment_id": "enr-001",
+        "status": "enrolled",
+        "is_active": true,
+        "final_grade": null,
+        "grade_scale": "0-5",
+        "passed": null,
+        "withdraw_date": null,
+        "created_at": "2026-09-18T12:00:00Z",
+        "updated_at": "2026-09-18T12:00:00Z",
+        "observed_at": "2026-09-18T12:00:00Z",
+        "available_at": "2026-09-19T12:00:00Z",
+        "source_system": "sis_university",
+        "source_record_id": "sis-cenr-67890"
+      }
+    ],
+    "courses": [
+      {
+        "course_id": "crs-cs201",
+        "institution_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        "program_id": "prog-cs-2024",
+        "period_id": "per-2024-2",
+        "code": "CS201",
+        "name": "Data Structures",
+        "credits": 4.0,
+        "section": "A",
+        "instructor_id": null,
+        "required": true,
+        "prerequisite_ids": [],
+        "created_at": "2026-09-01T00:00:00Z",
+        "updated_at": "2026-09-01T00:00:00Z"
+      }
+    ],
+    "grade_observations": [
+      {
+        "observation_id": "grd-001",
+        "student_id": "550e8400-e29b-41d4-a716-446655440001",
+        "course_enrollment_id": "cenr-001",
+        "period_id": "per-2024-2",
+        "grade_type": "midterm",
+        "score": 4.2,
+        "max_score": 5.0,
+        "percentage": 84.0,
+        "letter_grade": null,
+        "passed": true,
+        "comments": "",
+        "observed_at": "2026-09-15T10:00:00Z",
+        "available_at": "2026-09-16T08:00:00Z",
+        "source_system": "lms_canvas",
+        "source_record_id": "canvas-grade-111"
+      }
+    ]
+  },
+  "attendance": {
+    "observations": [
+      {
+        "observation_id": "att-001",
+        "student_id": "550e8400-e29b-41d4-a716-446655440001",
+        "course_enrollment_id": "cenr-001",
+        "period_id": "per-2024-2",
+        "session_date": "2026-09-15",
+        "session_type": "class",
+        "status": "present",
+        "minutes_late": null,
+        "minutes_duration": 90,
+        "observed_at": "2026-09-15T10:00:00Z",
+        "available_at": "2026-09-15T12:00:00Z",
+        "source_system": "lms_canvas",
+        "source_record_id": "canvas-att-222"
+      }
+    ]
+  },
+  "financial": null,
+  "engagement": null,
+  "supports": null,
+  "interventions": null,
+  "institutional_context": {
+    "period_id": "per-2024-2",
+    "period_code": "2024-2",
+    "period_start_date": "2024-08-26",
+    "period_end_date": "2024-12-13",
+    "period_is_closed": false,
+    "calendar_type": "semester",
+    "program_id": "prog-cs-2024",
+    "program_name": "Computer Science",
+    "program_level": "undergraduate",
+    "modality": "in_person",
+    "credit_system": "semester_credits",
+    "periods_completed": 3,
+    "total_periods": 10,
+    "period_position_ratio": 0.45
+  },
+  "available_sources": [
+    {"source_id": "academic", "status": "available"},
+    {"source_id": "attendance", "status": "available"},
+    {"source_id": "financial", "status": "not_provided"},
+    {"source_id": "engagement", "status": "not_integrated"}
+  ],
+  "extensions": {}
+}

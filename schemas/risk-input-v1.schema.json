@@ -1,0 +1,1743 @@
+{
+  "$defs": {
+    "AcademicBlock": {
+      "description": "Academic data observable at `as_of`.\n\nContains canonical enrollment and course data. No derived features.",
+      "properties": {
+        "enrollments": {
+          "description": "Enrollment records across periods.",
+          "items": {
+            "$ref": "#/$defs/Enrollment"
+          },
+          "title": "Enrollments",
+          "type": "array"
+        },
+        "course_enrollments": {
+          "description": "Course-level enrollment records.",
+          "items": {
+            "$ref": "#/$defs/CourseEnrollment"
+          },
+          "title": "Course Enrollments",
+          "type": "array"
+        },
+        "courses": {
+          "description": "Course catalog entries for the relevant periods.",
+          "items": {
+            "$ref": "#/$defs/Course"
+          },
+          "title": "Courses",
+          "type": "array"
+        },
+        "grade_observations": {
+          "description": "Individual grade observations.",
+          "items": {
+            "$ref": "#/$defs/GradeObservation"
+          },
+          "title": "Grade Observations",
+          "type": "array"
+        }
+      },
+      "title": "AcademicBlock",
+      "type": "object"
+    },
+    "AttendanceBlock": {
+      "description": "Attendance observations at `as_of`.\n\nRaw event-level data. Aggregated metrics are computed by the feature pipeline.",
+      "properties": {
+        "observations": {
+          "description": "Individual attendance observations.",
+          "items": {
+            "$ref": "#/$defs/AttendanceObservation"
+          },
+          "title": "Observations",
+          "type": "array"
+        }
+      },
+      "title": "AttendanceBlock",
+      "type": "object"
+    },
+    "AttendanceObservation": {
+      "description": "An attendance observation for a course session.\n\nAggregated attendance metrics (e.g., 'attendance_rate_30d')\nshould be computed as features, not stored here. This is the\nraw event-level data.",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "observation_id": {
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "course_enrollment_id": {
+          "minLength": 1,
+          "title": "Course Enrollment Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "session_date": {
+          "description": "Date of the session (ISO 8601).",
+          "title": "Session Date",
+          "type": "string"
+        },
+        "session_type": {
+          "default": "class",
+          "description": "Type of session: 'class', 'lab', 'exam', 'tutorial', etc.",
+          "title": "Session Type",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/AttendanceStatus"
+        },
+        "minutes_late": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minutes late if status is TARDY. Null otherwise.",
+          "title": "Minutes Late"
+        },
+        "minutes_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration of the session in minutes.",
+          "title": "Minutes Duration"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "observation_id",
+        "student_id",
+        "course_enrollment_id",
+        "period_id",
+        "session_date",
+        "status"
+      ],
+      "title": "AttendanceObservation",
+      "type": "object"
+    },
+    "AttendanceStatus": {
+      "enum": [
+        "present",
+        "absent",
+        "tardy",
+        "excused",
+        "not_recorded"
+      ],
+      "title": "AttendanceStatus",
+      "type": "string"
+    },
+    "Course": {
+      "description": "A course offering within a specific period.\n\nRepresents the course itself, not a student's enrollment in it.",
+      "properties": {
+        "created_at": {
+          "description": "When this canonical record was created.",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "When this canonical record was last updated.",
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "course_id": {
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        },
+        "institution_id": {
+          "minLength": 1,
+          "title": "Institution Id",
+          "type": "string"
+        },
+        "program_id": {
+          "minLength": 1,
+          "title": "Program Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "code": {
+          "description": "Course code (e.g., 'MATH101').",
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "credits": {
+          "default": 0.0,
+          "description": "Credit value of the course.",
+          "minimum": 0,
+          "title": "Credits",
+          "type": "number"
+        },
+        "section": {
+          "default": "",
+          "description": "Section identifier if multiple sections.",
+          "title": "Section",
+          "type": "string"
+        },
+        "instructor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructor Id"
+        },
+        "required": {
+          "default": true,
+          "description": "Whether this is a required or elective course.",
+          "title": "Required",
+          "type": "boolean"
+        },
+        "prerequisite_ids": {
+          "description": "IDs of prerequisite courses.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Prerequisite Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "course_id",
+        "institution_id",
+        "program_id",
+        "period_id",
+        "code",
+        "name"
+      ],
+      "title": "Course",
+      "type": "object"
+    },
+    "CourseEnrollment": {
+      "description": "A student's enrollment in a specific course within a period.\n\nLinks a Student to a Course. One record per student per course per period.",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "When this canonical record was created.",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "When this canonical record was last updated.",
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "course_enrollment_id": {
+          "minLength": 1,
+          "title": "Course Enrollment Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "course_id": {
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "enrollment_id": {
+          "description": "Reference to the parent Enrollment record.",
+          "title": "Enrollment Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/EnrollmentStatus"
+        },
+        "is_active": {
+          "default": true,
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "final_grade": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Final numeric grade for the course. Null if period not closed.",
+          "title": "Final Grade"
+        },
+        "grade_scale": {
+          "default": "0-5",
+          "description": "Grade scale used (e.g., '0-5', '0-100', 'A-F', 'pass-fail').",
+          "title": "Grade Scale",
+          "type": "string"
+        },
+        "passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the student passed. Null if not yet determined.",
+          "title": "Passed"
+        },
+        "withdraw_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the student withdrew from the course, if applicable.",
+          "title": "Withdraw Date"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "course_enrollment_id",
+        "student_id",
+        "course_id",
+        "period_id",
+        "enrollment_id",
+        "status"
+      ],
+      "title": "CourseEnrollment",
+      "type": "object"
+    },
+    "EducationLevel": {
+      "description": "Universal education levels.",
+      "enum": [
+        "primary",
+        "secondary",
+        "technical",
+        "undergraduate",
+        "graduate",
+        "doctorate",
+        "professional",
+        "certificate",
+        "custom"
+      ],
+      "title": "EducationLevel",
+      "type": "string"
+    },
+    "EngagementBlock": {
+      "description": "Engagement events at `as_of`.\n\nContains raw interaction events from LMS, portals, etc.",
+      "properties": {
+        "events": {
+          "description": "Engagement events.",
+          "items": {
+            "$ref": "#/$defs/EngagementEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "title": "EngagementBlock",
+      "type": "object"
+    },
+    "EngagementEvent": {
+      "description": "A discrete engagement event.\n\nEvents are raw observations. Engagement features (e.g.,\n'login_frequency_7d', 'assignment_submission_rate') should\nbe computed from these events in the feature pipeline.",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "event_id": {
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "event_type": {
+          "$ref": "#/$defs/EngagementEventType"
+        },
+        "event_name": {
+          "default": "",
+          "description": "Human-readable event name for custom types.",
+          "title": "Event Name",
+          "type": "string"
+        },
+        "platform": {
+          "default": "",
+          "description": "Platform where event occurred (e.g., 'canvas', 'moodle', 'blackboard').",
+          "title": "Platform",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration of the event if applicable (e.g., video watch time).",
+          "title": "Duration Seconds"
+        },
+        "course_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Course Id"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Additional event-specific data.",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "event_id",
+        "student_id",
+        "period_id",
+        "event_type"
+      ],
+      "title": "EngagementEvent",
+      "type": "object"
+    },
+    "EngagementEventType": {
+      "enum": [
+        "lms_login",
+        "lms_assignment_submit",
+        "lms_forum_post",
+        "lms_video_watch",
+        "lms_resource_access",
+        "library_access",
+        "email_opened",
+        "email_clicked",
+        "advisor_meeting",
+        "tutoring_session",
+        "custom"
+      ],
+      "title": "EngagementEventType",
+      "type": "string"
+    },
+    "Enrollment": {
+      "description": "A student's enrollment in a program for a specific period.\n\nThis is the primary record for determining continuation/dropout.\nOne enrollment per student per program per period.",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "When this canonical record was created.",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "When this canonical record was last updated.",
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "enrollment_id": {
+          "minLength": 1,
+          "title": "Enrollment Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "institution_id": {
+          "minLength": 1,
+          "title": "Institution Id",
+          "type": "string"
+        },
+        "program_id": {
+          "minLength": 1,
+          "title": "Program Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/EnrollmentStatus"
+        },
+        "is_active": {
+          "default": true,
+          "description": "Whether the enrollment is currently active. A student with is_active=True in T+1 continued.",
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "semester_index": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which semester/trimester of the program this is (e.g., 3rd semester of a 10-semester program).",
+          "title": "Semester Index"
+        },
+        "accumulated_credits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Credits completed up to this period.",
+          "title": "Accumulated Credits"
+        },
+        "term_gpa": {
+          "anyOf": [
+            {
+              "maximum": 5.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPA for this specific period (0.0 - 5.0 scale).",
+          "title": "Term Gpa"
+        },
+        "cumulative_gpa": {
+          "anyOf": [
+            {
+              "maximum": 5.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cumulative GPA up to this period.",
+          "title": "Cumulative Gpa"
+        },
+        "exit_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Raw exit reason from source system. Normalized via LabelContract.resolve_exit_reason().",
+          "title": "Exit Reason"
+        },
+        "exit_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date when the student exited (ISO 8601). Null if still enrolled.",
+          "title": "Exit Date"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "enrollment_id",
+        "student_id",
+        "institution_id",
+        "program_id",
+        "period_id",
+        "status"
+      ],
+      "title": "Enrollment",
+      "type": "object"
+    },
+    "EnrollmentStatus": {
+      "enum": [
+        "enrolled",
+        "completed",
+        "withdrawn",
+        "dropped",
+        "failed",
+        "incomplete",
+        "transferred",
+        "unknown"
+      ],
+      "title": "EnrollmentStatus",
+      "type": "string"
+    },
+    "FinancialBlock": {
+      "description": "Financial status at `as_of`.\n\nEntirely optional. Some institutions don't track financial data\nor it's not relevant to the prediction.",
+      "properties": {
+        "records": {
+          "description": "Financial status records.",
+          "items": {
+            "$ref": "#/$defs/FinancialStatusRecord"
+          },
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "title": "FinancialBlock",
+      "type": "object"
+    },
+    "FinancialStatus": {
+      "enum": [
+        "current",
+        "overdue",
+        "partial_payment",
+        "waived",
+        "scholarship",
+        "icetex",
+        "pending",
+        "unknown"
+      ],
+      "title": "FinancialStatus",
+      "type": "string"
+    },
+    "FinancialStatusRecord": {
+      "description": "Financial status of a student for a specific period.\n\nTracks tuition payment status, scholarships, and financial aid.\nFinancial distress is a strong predictor of dropout.",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "observation_id": {
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/FinancialStatus"
+        },
+        "amount_due": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total amount due for the period.",
+          "title": "Amount Due"
+        },
+        "amount_paid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amount already paid.",
+          "title": "Amount Paid"
+        },
+        "currency": {
+          "default": "USD",
+          "description": "ISO 4217 currency code.",
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Currency",
+          "type": "string"
+        },
+        "payment_deadline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment deadline (ISO 8601 date).",
+          "title": "Payment Deadline"
+        },
+        "scholarship_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of scholarship or financial aid if applicable.",
+          "title": "Scholarship Type"
+        },
+        "has_outstanding_debt": {
+          "default": false,
+          "description": "Whether the student has debt from previous periods.",
+          "title": "Has Outstanding Debt",
+          "type": "boolean"
+        },
+        "consecutive_overdue_periods": {
+          "default": 0,
+          "description": "Number of consecutive periods with overdue payments. High values are strong dropout signals.",
+          "minimum": 0,
+          "title": "Consecutive Overdue Periods",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "observation_id",
+        "student_id",
+        "period_id",
+        "status"
+      ],
+      "title": "FinancialStatusRecord",
+      "type": "object"
+    },
+    "GradeObservation": {
+      "description": "A grade observation for a course enrollment.\n\nTracks individual grade events (midterm, final, assignments)\nrather than just the final grade. This enables temporal features\nlike \"grade trajectory\" and \"recent performance drop\".",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "observation_id": {
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "course_enrollment_id": {
+          "minLength": 1,
+          "title": "Course Enrollment Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "grade_type": {
+          "description": "Type of grade: 'midterm', 'final', 'assignment', 'quiz', 'project', 'lab', 'participation', etc.",
+          "title": "Grade Type",
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric score. Null if not yet graded.",
+          "title": "Score"
+        },
+        "max_score": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum possible score.",
+          "title": "Max Score"
+        },
+        "percentage": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Percentage grade (0-100). Useful for cross-scale comparison.",
+          "title": "Percentage"
+        },
+        "letter_grade": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Letter grade if applicable (e.g., 'A', 'B+', 'F').",
+          "title": "Letter Grade"
+        },
+        "passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passed"
+        },
+        "comments": {
+          "default": "",
+          "title": "Comments",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "observation_id",
+        "student_id",
+        "course_enrollment_id",
+        "period_id",
+        "grade_type"
+      ],
+      "title": "GradeObservation",
+      "type": "object"
+    },
+    "InstitutionalContext": {
+      "description": "Context that changes the meaning of other data.\n\nUses universal concepts from the canonical model.\nCountry-specific context goes in extensions.",
+      "properties": {
+        "period_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Current academic period ID.",
+          "title": "Period Id"
+        },
+        "period_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Institution's own period code.",
+          "title": "Period Code"
+        },
+        "period_start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date of the current period (ISO 8601).",
+          "title": "Period Start Date"
+        },
+        "period_end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected end date of the current period (ISO 8601).",
+          "title": "Period End Date"
+        },
+        "period_is_closed": {
+          "default": false,
+          "description": "Whether the current period has been officially closed.",
+          "title": "Period Is Closed",
+          "type": "boolean"
+        },
+        "calendar_type": {
+          "default": "",
+          "description": "Calendar type: 'semester', 'trimester', 'quarter', etc.",
+          "title": "Calendar Type",
+          "type": "string"
+        },
+        "program_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Program Id"
+        },
+        "program_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Program Name"
+        },
+        "program_level": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EducationLevel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Education level of the program."
+        },
+        "modality": {
+          "default": "",
+          "description": "Delivery modality: 'in_person', 'online', 'hybrid', etc.",
+          "title": "Modality",
+          "type": "string"
+        },
+        "credit_system": {
+          "default": "",
+          "description": "Credit system type: 'semester_credits', 'quarter_credits', 'ects', 'custom', etc.",
+          "title": "Credit System",
+          "type": "string"
+        },
+        "periods_completed": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of academic periods the student has completed.",
+          "title": "Periods Completed"
+        },
+        "total_periods": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total periods required for program completion.",
+          "title": "Total Periods"
+        },
+        "period_position_ratio": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position within the current period (0.0 = start, 1.0 = end).",
+          "title": "Period Position Ratio"
+        }
+      },
+      "title": "InstitutionalContext",
+      "type": "object"
+    },
+    "Intervention": {
+      "description": "An intervention action taken for a student.\n\nInterventions are the institutional response to risk predictions.\nThey are essential for:\n1. Measuring model impact (did the intervention help?)\n2. Avoiding confounding (students who got help vs. those who didn't)\n3. Resource allocation (which interventions are most effective?)",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "intervention_id": {
+          "minLength": 1,
+          "title": "Intervention Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "intervention_type": {
+          "$ref": "#/$defs/InterventionType"
+        },
+        "triggered_by": {
+          "default": "",
+          "description": "What triggered this intervention: 'risk_score', 'manual', 'policy', 'student_request', etc.",
+          "title": "Triggered By",
+          "type": "string"
+        },
+        "advisor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Advisor Id"
+        },
+        "advisor_name": {
+          "default": "",
+          "title": "Advisor Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/InterventionOutcome",
+          "default": "unknown"
+        },
+        "scheduled_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Date"
+        },
+        "completed_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed Date"
+        },
+        "risk_score_at_intervention": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Risk score that triggered or was present at intervention time.",
+          "title": "Risk Score At Intervention"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "intervention_id",
+        "student_id",
+        "period_id",
+        "intervention_type"
+      ],
+      "title": "Intervention",
+      "type": "object"
+    },
+    "InterventionOutcome": {
+      "enum": [
+        "completed",
+        "in_progress",
+        "no_response",
+        "declined",
+        "deferred",
+        "unknown"
+      ],
+      "title": "InterventionOutcome",
+      "type": "string"
+    },
+    "InterventionType": {
+      "enum": [
+        "advisor_outreach",
+        "email_campaign",
+        "phone_call",
+        "meeting_scheduled",
+        "tutoring_referral",
+        "financial_aid_review",
+        "academic_plan",
+        "probation_warning",
+        "peer_support",
+        "custom"
+      ],
+      "title": "InterventionType",
+      "type": "string"
+    },
+    "InterventionsBlock": {
+      "description": "Intervention history at `as_of`.",
+      "properties": {
+        "records": {
+          "description": "Known interventions.",
+          "items": {
+            "$ref": "#/$defs/Intervention"
+          },
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "title": "InterventionsBlock",
+      "type": "object"
+    },
+    "SourceAvailability": {
+      "description": "Explicit record of what data sources are available.\n\nDistinguishes between:\n  - AVAILABLE: source is integrated and has data\n  - NOT_PROVIDED: source exists but the institution didn't send data\n  - NOT_INTEGRATED: source is not connected\n  - EMPTY: source is connected but has no data for this student",
+      "properties": {
+        "source_id": {
+          "description": "Source identifier (e.g., 'academic', 'attendance', 'financial', 'engagement', 'lms', 'support', 'interventions').",
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SourceStatus"
+        },
+        "last_available_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When data from this source was last updated.",
+          "title": "Last Available At"
+        },
+        "record_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of records from this source (if known).",
+          "title": "Record Count"
+        }
+      },
+      "required": [
+        "source_id",
+        "status"
+      ],
+      "title": "SourceAvailability",
+      "type": "object"
+    },
+    "SourceStatus": {
+      "description": "Whether a data source is available for this student/institution.",
+      "enum": [
+        "available",
+        "not_provided",
+        "not_integrated",
+        "empty"
+      ],
+      "title": "SourceStatus",
+      "type": "string"
+    },
+    "StudentSupport": {
+      "description": "A support service interaction or enrollment.\n\nTracks whether the student is receiving support and what type.\nStudents without support who show risk signals are higher priority.",
+      "properties": {
+        "observed_at": {
+          "description": "When the real-world event actually occurred.",
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "available_at": {
+          "description": "When this data became available in the system. Features derived from this record cannot be used for predictions made before this timestamp.",
+          "format": "date-time",
+          "title": "Available At",
+          "type": "string"
+        },
+        "source_system": {
+          "description": "Identifier of the source system (e.g., 'sis_colombia', 'lms_canvas', 'manual').",
+          "minLength": 1,
+          "title": "Source System",
+          "type": "string"
+        },
+        "source_record_id": {
+          "default": "",
+          "description": "Opaque record ID in the source system. Enables traceability.",
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "support_id": {
+          "minLength": 1,
+          "title": "Support Id",
+          "type": "string"
+        },
+        "student_id": {
+          "minLength": 1,
+          "title": "Student Id",
+          "type": "string"
+        },
+        "period_id": {
+          "minLength": 1,
+          "title": "Period Id",
+          "type": "string"
+        },
+        "support_type": {
+          "$ref": "#/$defs/SupportType"
+        },
+        "status": {
+          "default": "active",
+          "description": "Status: 'active', 'completed', 'pending', 'cancelled'.",
+          "title": "Status",
+          "type": "string"
+        },
+        "provider_name": {
+          "default": "",
+          "description": "Name of the support provider.",
+          "title": "Provider Name",
+          "type": "string"
+        },
+        "provider_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Id"
+        },
+        "sessions_completed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Sessions Completed",
+          "type": "integer"
+        },
+        "sessions_scheduled": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Sessions Scheduled",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observed_at",
+        "available_at",
+        "source_system",
+        "support_id",
+        "student_id",
+        "period_id",
+        "support_type"
+      ],
+      "title": "StudentSupport",
+      "type": "object"
+    },
+    "SupportType": {
+      "enum": [
+        "academic_advisor",
+        "tutoring",
+        "counseling",
+        "career_services",
+        "financial_aid",
+        "disability_services",
+        "peer_mentoring",
+        "workshop",
+        "custom"
+      ],
+      "title": "SupportType",
+      "type": "string"
+    },
+    "SupportsBlock": {
+      "description": "Support service records at `as_of`.",
+      "properties": {
+        "records": {
+          "description": "Support service interactions.",
+          "items": {
+            "$ref": "#/$defs/StudentSupport"
+          },
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "title": "SupportsBlock",
+      "type": "object"
+    }
+  },
+  "description": "Canonical entry contract for Leo Risk Engine.\n\nRepresents everything the engine can know about a student at a\nspecific point in time. External systems must normalize their data\nto this contract before it enters the engine.\n\nThe engine does NOT depend on leoApi or any specific SIS. Any\nproducer capable of generating a valid RiskInput can use the engine.",
+  "properties": {
+    "schema_version": {
+      "default": "1.0.0",
+      "description": "Schema version. Increment major for breaking changes, minor for backward-compatible additions.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "as_of": {
+      "description": "The exact moment up to which information may be used. No observation with available_at > as_of is permitted.",
+      "format": "date-time",
+      "title": "As Of",
+      "type": "string"
+    },
+    "student_id": {
+      "minLength": 1,
+      "title": "Student Id",
+      "type": "string"
+    },
+    "institution_id": {
+      "minLength": 1,
+      "title": "Institution Id",
+      "type": "string"
+    },
+    "academic_program_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Program the student is enrolled in.",
+      "title": "Academic Program Id"
+    },
+    "academic_period_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Current academic period.",
+      "title": "Academic Period Id"
+    },
+    "academic": {
+      "$ref": "#/$defs/AcademicBlock"
+    },
+    "attendance": {
+      "$ref": "#/$defs/AttendanceBlock"
+    },
+    "financial": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FinancialBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Financial data. None if not available from this institution."
+    },
+    "engagement": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EngagementBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Engagement events. None if not available."
+    },
+    "supports": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SupportsBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Support services. None if not available."
+    },
+    "interventions": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InterventionsBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Intervention history. None if not available."
+    },
+    "institutional_context": {
+      "$ref": "#/$defs/InstitutionalContext"
+    },
+    "available_sources": {
+      "description": "Which data sources are available for this student. Critical for missing data policy.",
+      "items": {
+        "$ref": "#/$defs/SourceAvailability"
+      },
+      "title": "Available Sources",
+      "type": "array"
+    },
+    "extensions": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "description": "Namespaced extensions for country/institution-specific data. Keys must be namespaced (e.g., 'co.education', 'us.collegeboard'). Values are validated dictionaries.",
+      "title": "Extensions",
+      "type": "object"
+    }
+  },
+  "required": [
+    "as_of",
+    "student_id",
+    "institution_id"
+  ],
+  "title": "RiskInput",
+  "type": "object"
+}

@@ -448,7 +448,13 @@ The dropout label is formally defined in [`docs/dropout-label-definition.md`](do
 - [x] Dropout label definition document (`docs/dropout-label-definition.md`)
 - [x] Canonical academic model (13 Pydantic contracts)
 - [x] `DataAvailability` pattern for leakage prevention
-- [x] 125 unit tests (domain + contracts + health)
+- [x] `RiskInput` canonical entry contract with point-in-time validation
+- [x] PII-free design with optional extensions
+- [x] Deterministic canonical serialization for hashing
+- [x] `LabelBuilder` — materializes outcomes from enrollment history
+- [x] `LabelBuildReport` — label usability breakdown
+- [x] `DataAuditor` — data availability audit with per-institution metrics
+- [x] 225 unit tests (domain + contracts + health + risk input + label builder + data auditor)
 - [ ] SIS adapters (Colombia, US, Mexico)
 - [ ] Feature engineering pipeline
 - [ ] Label builder (applies `LabelContract` to raw data)

@@ -3,12 +3,11 @@ from pydantic import ValidationError
 
 from leo_risk.domain.academic_calendar import AcademicCalendar
 from leo_risk.domain.censorship import CensorshipType
+from leo_risk.domain.entities.student_outcome import StudentOutcome
 from leo_risk.domain.enums import OutcomeStatus
-from leo_risk.domain.exit_reason import ExitReason, NON_DROPOUT_REASONS, POTENTIALLY_TEMPORARY
+from leo_risk.domain.exit_reason import NON_DROPOUT_REASONS, POTENTIALLY_TEMPORARY, ExitReason
 from leo_risk.domain.label_contract import LabelContract
 from leo_risk.domain.label_version import LabelVersion
-from leo_risk.domain.entities.student_outcome import StudentOutcome
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -191,21 +190,25 @@ class TestStudentOutcomeValidations:
                 censorship_type=CensorshipType.OBSERVED,
             )
 
-    def test_dropout_with_deceased_fails(self) -> None:
-        with pytest.raises(ValidationError, match="incompatible with DROPPED_OUT"):
-            _make_outcome(
-                status=OutcomeStatus.DROPPED_OUT,
-                exit_reason=ExitReason.DECEASED,
-                censorship_type=CensorshipType.OBSERVED,
-            )
+    def test_dropout_with_deceased_allowed(self) -> None:
+        """DROPPED_OUT with DECEASED exit is allowed — policy decides via LabelContract."""
+        outcome = _make_outcome(
+            status=OutcomeStatus.DROPPED_OUT,
+            exit_reason=ExitReason.DECEASED,
+            censorship_type=CensorshipType.OBSERVED,
+        )
+        assert outcome.status == OutcomeStatus.DROPPED_OUT
+        assert outcome.exit_reason == ExitReason.DECEASED
 
-    def test_dropout_with_graduated_fails(self) -> None:
-        with pytest.raises(ValidationError, match="incompatible with DROPPED_OUT"):
-            _make_outcome(
-                status=OutcomeStatus.DROPPED_OUT,
-                exit_reason=ExitReason.GRADUATED,
-                censorship_type=CensorshipType.OBSERVED,
-            )
+    def test_dropout_with_graduated_allowed(self) -> None:
+        """DROPPED_OUT with GRADUATED exit is allowed — policy decides via LabelContract."""
+        outcome = _make_outcome(
+            status=OutcomeStatus.DROPPED_OUT,
+            exit_reason=ExitReason.GRADUATED,
+            censorship_type=CensorshipType.OBSERVED,
+        )
+        assert outcome.status == OutcomeStatus.DROPPED_OUT
+        assert outcome.exit_reason == ExitReason.GRADUATED
 
     def test_pending_with_voluntary_reason_fails(self) -> None:
         with pytest.raises(ValidationError, match="status=pending cannot have exit_reason"):

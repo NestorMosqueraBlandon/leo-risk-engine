@@ -1,12 +1,13 @@
 import logging
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
 from leo_risk.infrastructure.logging.config import get_settings
 from leo_risk.infrastructure.logging.logger import setup_logging
 from leo_risk.interface.http.routes.health import router as health_router
+from leo_risk.interface.http.routes.validate import router as validate_router
 
 
 @asynccontextmanager
@@ -29,6 +30,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.include_router(health_router)
+    if settings.debug:
+        app.include_router(validate_router)
     return app
 
 

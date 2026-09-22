@@ -8,16 +8,14 @@ Covers:
   - Edge cases (unicode, empty optional fields, extreme values)
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
 
-from leo_risk.contracts.base import CanonicalBase, DataAvailability
 from leo_risk.contracts.core import (
     AcademicPeriod,
     AcademicProgram,
-    Gender,
     Institution,
     Student,
     StudentStatus,
@@ -28,6 +26,7 @@ from leo_risk.contracts.enrollment import (
     Enrollment,
     EnrollmentStatus,
 )
+from leo_risk.contracts.interventions import Intervention, InterventionOutcome, InterventionType
 from leo_risk.contracts.observations import (
     AttendanceObservation,
     AttendanceStatus,
@@ -36,14 +35,12 @@ from leo_risk.contracts.observations import (
     GradeObservation,
 )
 from leo_risk.contracts.support import EngagementEvent, EngagementEventType, StudentSupport, SupportType
-from leo_risk.contracts.interventions import Intervention, InterventionOutcome, InterventionType
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
-NOW = datetime.now(timezone.utc)
+NOW = datetime.now(UTC)
 
 
 def _ts(hours_ago: float = 0) -> datetime:
